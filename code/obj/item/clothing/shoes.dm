@@ -713,7 +713,7 @@ TYPEINFO(/obj/item/clothing/shoes/cowboy/boom)
 			if (src.tank)
 				boutput(user, SPAN_ALERT("There's already a tank installed!"))
 				return
-			if (!istype(W, /obj/item/tank/mini/oxygen))
+			if (!istype(W, /obj/item/tank/mini/oxygen || /obj/item/tank/mini/ntjet))
 				boutput(user, SPAN_ALERT("[W] doesn't fit!"))
 				return
 			boutput(user, SPAN_NOTICE("You install [W] into [src]."))
@@ -772,6 +772,27 @@ TYPEINFO(/obj/item/clothing/shoes/cowboy/boom)
 	get_desc(dist)
 		if (dist <= 1)
 			. += "<br>They're currently [src.on ? "on" : "off"].<br>[src.tank ? "The tank's current air pressure reads [MIXTURE_PRESSURE(src.tank.air_contents)]." : SPAN_ALERT("They have no tank attached!")]"
+
+	ntjet
+		name = "NT S.M.B.s"
+		desc = "Nanotrasen Spatial Mobility Boots. Grants propulsion capabilities and magnetic anchoring to the wearer, besides just looking quite stylish."
+		icon_state = "ntjet"
+		magnetic = 1
+		c_flags = NOSLIP
+		compatible_species = list("cow", "human")
+		kick_bonus = 2
+
+		New()
+			..()
+			src.tank = new /obj/item/tank/mini/ntjet(src)
+
+		setupProperties()
+			..()
+			setProperty("coldprot", 10)
+			setProperty("heatprot", 10)
+			setProperty("chemprot", 7)
+			setProperty("meleeprot", 1)
+			setProperty("movespeed", 0)
 
 /obj/item/clothing/shoes/jetpack/abilities = list(/obj/ability_button/jetboot_toggle)
 
