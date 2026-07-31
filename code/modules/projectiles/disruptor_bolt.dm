@@ -72,3 +72,12 @@ toxic - poisons
 				var/obj/window/win = hit
 				win.smash()
 
+/datum/projectile/disruptor/eques
+	damage = 7
+	cost = 20
+	stun = 5
+	icon_state = "disrupt"
+	shot_sound = 'sound/weapons/lasermed.ogg'
+	projectile_speed = 42
+	dissipation_delay = 10
+	sname = "disrupting bolt"

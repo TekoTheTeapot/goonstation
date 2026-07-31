@@ -2013,6 +2013,47 @@ TYPEINFO(/obj/item/gun/energy/vexillifer4)
 				FLICK("lasercannon-fire", src)
 			. = ..()
 
+TYPEINFO(/obj/item/gun/energy/eques18)
+		mats = list("energy_high" = 15,
+				"conductive_high" = 15,
+				"metal_superdense" = 20)
+/obj/item/gun/energy/eques18
+	name = "\improper Eques XVIII"
+	desc = "It's a taser? Or a laser pistol? You can't tell."
+	w_class = W_CLASS_SMALL
+	icon_state = "eques_18_plasma"
+	item_state = "protopistol"
+	muzzle_flash = "muzzle_flash_bluezap"
+	cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer/bad
+	can_swap_cell = 0
+	var/disruptor = FALSE
+
+	New()
+		set_current_projectile(new/datum/projectile/laser/plasma/eques)
+		projectiles = list(current_projectile, new/datum/projectile/disruptor/eques)
+		..()
+
+	update_icon()
+		..()
+		if(!src.disruptor)
+			src.icon_state = "eques_18_plasma"
+		else
+			src.icon_state = "eques_18_disrupt"
+
+	attack_self(var/mob/M)
+		..()
+		src.disruptor = !src.disruptor
+		UpdateIcon()
+		if(src.disruptor)
+			FLICK("eques_18_swap", src)
+		M.update_inhands()
+
+	shoot(turf/target, turf/start, mob/user, POX, POY, is_dual_wield, atom/called_target = null)
+		if(src.canshoot(user) && src.disruptor)
+			FLICK("eques_18_disruptfire", src)
+		. = ..()
+
 /obj/item/gun/energy/tasersmg
 	name = "taser SMG"
 	icon_state = "tasersmg"

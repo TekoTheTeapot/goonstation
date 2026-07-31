@@ -752,6 +752,18 @@ toxic - poisons
 				hit.delStatus("signified")
 			..()
 
+/datum/projectile/laser/plasma/eques
+	icon_state = "phaser_med"
+	shot_sound = 'sound/weapons/lasersound.ogg'
+	dissipation_delay = 10
+	dissipation_rate = 5
+	cost = 30
+	sname = "plasma burst"
+	damage = 20
+	shot_number = 2
+	shot_delay = 1
+	projectile_speed = 42
+	shot_volume = 75
 
 /datum/projectile/laser/plasma/auto
 	icon_state = "miniphaser_med"
