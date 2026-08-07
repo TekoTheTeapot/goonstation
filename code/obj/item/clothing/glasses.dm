@@ -916,22 +916,10 @@ TYPEINFO(/obj/item/clothing/glasses/nightvision/sechud/flashblocking)
 			NT //NTSO specific
 				name = "Nanotrasen operative goggles"
 				icon_state = "nightvisionNT"
-				desc = "Goggles with separate built-in image-intensifier tubes to allow vision in the dark. This version has built-in threat recognition functionality and polarized lenses, meant for use by Nanotrasen operatives."
+				desc = "Goggles with separate built-in image-intensifier tubes to allow vision in the dark. This version has built-in SecHUD functionality and polarized lenses, meant for use by Nanotrasen operatives."
 				color_r = 0.5
 				color_g = 0.5
 				color_b = 0.8
-
-			equipped(var/mob/user, var/slot)
-				..()
-				if (slot == SLOT_GLASSES)
-				get_image_group(CLIENT_IMAGE_GROUP_HEALTH_MON_ICONS).add_mob(user)
-				APPLY_ATOM_PROPERTY(user,PROP_MOB_EXAMINE_HEALTH,src)
-
-			unequipped(var/mob/user)
-				if(src.equipped_in_slot == SLOT_GLASSES)
-					REMOVE_ATOM_PROPERTY(user,PROP_MOB_EXAMINE_HEALTH,src)
-					get_image_group(CLIENT_IMAGE_GROUP_HEALTH_MON_ICONS).remove_mob(user)
-				..()
 
 /obj/item/clothing/glasses/packetvision
 	name = "\improper Packetvision HUD"
