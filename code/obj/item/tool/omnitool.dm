@@ -31,7 +31,7 @@
 		RegisterSignal(src, COMSIG_ITEM_ATTACKBY_PRE, PROC_REF(pre_attackby))
 
 		for(var/omnimode_type in src.mode_types)
-			var/datum/omnimode/omnimode = new omnimode_type()
+			var/datum/omnimode/omnimode = new omnimode_type(src)
 			if(!omnimode)
 				CRASH("Wrong Omnimode Type: [omnimode_type] | [src]")
 			src.list_modes += omnimode
@@ -282,6 +282,18 @@
 	desc = "A set of tools on telescopic arms. It's the robotic future!"
 	animated_changes = TRUE
 
+/obj/item/tool/omnitool/NT
+	prefix = "nt-omnitool"
+	desc = "The National Notary 'Agrimensor' model pen, for the engineer with class. Comes with patented TrueBlue(TM) ink!"
+	mode_types = list(
+		/datum/omnimode/crowbar,
+		/datum/omnimode/screwdriver,
+		/datum/omnimode/multitool,
+		/datum/omnimode/wrench,
+		/datum/omnimode/wirecutters,
+		/datum/omnimode/pen
+	)
+
 TYPEINFO(/obj/item/tool/omnitool/dualconstruction_device)
 	analyser_flags = parent_type::analyser_flags | ANALYSER_ELECTRONIC
 	mats = list("dense_property_ultra" = 10,
@@ -455,6 +467,24 @@ ABSTRACT_TYPE(/datum/omnimode)
 		mode_id = OMNITOOL::MODE_BOTTLE_OPENER
 		context_icon = "bottleopener"
 		item_type = /obj/item/kitchen/utensil
+	pen
+		mode_name = "pen"
+		mode_id = OMNITOOL::MODE_PEN
+		context_icon = "pen"
+		item_type = /obj/item/pen/multipen
+		var/obj/item/pen/omnimode_pen = null
+
+		New(var/obj/item/tool/omnitool/omni)
+			. = ..()
+			src.omnimode_pen = new(omni)
+			src.omnimode_pen.font = "Georgia"
+			src.omnimode_pen.color = "#0047ab"
+			src.omnimode_pen.font_color = "#0047ab"
+
+		on_attack_after(obj/item/tool/omnitool/omni, atom/target, mob/user)
+			. = ..()
+			target.Attackby(src.omnimode_pen, user)
+			src.omnimode_pen.AfterAttack(target, user)
 
 // ===========================================================================
 // ========================= Omnitool Context Actions =========================
