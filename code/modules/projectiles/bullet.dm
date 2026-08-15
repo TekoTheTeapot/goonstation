@@ -400,36 +400,52 @@ toxic - poisons
 /datum/projectile/bullet/nine_mm_NATO
 	name = "bullet"
 	shot_sound = 'sound/weapons/9x19NATO.ogg'
-	damage = 6
-	stun = 4
 	hit_ground_chance = 75
 	dissipation_rate = 3
 	dissipation_delay = 8
 	projectile_speed = 48
 	impact_image_state = "bullethole-small"
-	hit_type = DAMAGE_BLUNT
-	implanted = /obj/item/implant/projectile/ninemmplastic
-	casing = /obj/item/casing/small
 
-	on_hit(atom/hit)
-		..()
-		if(ishuman(hit))
-			var/mob/living/carbon/human/M = hit
-			if(M.getStatusDuration("slowed") < 2.5 SECONDS)
-				M.changeStatus("slowed", 1 SECOND, optional = 2)
+	frangible
+		damage = 6
+		stun = 4
+		hit_type = DAMAGE_BLUNT
+		implanted = /obj/item/implant/projectile/ninemmplastic
+		casing = /obj/item/casing/small
 
-/datum/projectile/bullet/nine_mm_NATO/burst
-	shot_number = 3
-	cost = 3
-	sname = "burst fire"
+		on_hit(atom/hit)
+			..()
+			if(ishuman(hit))
+				var/mob/living/carbon/human/M = hit
+				if(M.getStatusDuration("slowed") < 2.5 SECONDS)
+					M.changeStatus("slowed", 1 SECOND, optional = 2)
 
-/datum/projectile/bullet/nine_mm_NATO/auto
-	fullauto_valid = 1
-	shot_number = 1
-	cost = 1
-	shot_volume = 66
-	sname = "full auto"
+		burst
+			shot_number = 3
+			cost = 3
+			sname = "burst fire"
 
+		auto
+			fullauto_valid = 1
+			shot_number = 1
+			cost = 1
+			shot_volume = 66
+			sname = "full auto"
+
+	lethal
+		damage = 25
+		hit_ground_chance = 50
+		dissipation_rate = 5
+		hit_type = DAMAGE_CUT
+		implanted = /obj/item/implant/projectile/bullet_9mm
+		casing = /obj/item/casing/small
+
+		auto
+			fullauto_valid = 1
+			cost = 1
+			shot_number = 1
+			shot_volume = 66
+			sname = "full auto"
 
 
 /datum/projectile/bullet/nine_mm_surplus
@@ -679,6 +695,16 @@ toxic - poisons
 	casing = /obj/item/casing/derringer
 
 //0.45
+/datum/projectile/bullet/pistol_45
+	name = "bullet"
+	shot_sound = 'sound/weapons/deagle.ogg'
+	damage = 45
+	hit_type = DAMAGE_CUT
+	implanted = /obj/item/implant/projectile/bullet_45B
+	impact_image_state = "bullethole-small"
+	casing = /obj/item/casing/small
+	ricochets = TRUE
+
 /datum/projectile/bullet/revolver_45
 	name = "bullet"
 	damage = 35

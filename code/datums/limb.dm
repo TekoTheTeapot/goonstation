@@ -334,7 +334,7 @@
 		muzzle_flash = "muzzle_flash_launch"
 
 	clock
-		proj = new /datum/projectile/bullet/nine_mm_NATO/auto
+		proj = new /datum/projectile/bullet/nine_mm_NATO/frangible/auto
 		shots = 16
 		current_shots = 16
 		reload_time = 60 SECONDS

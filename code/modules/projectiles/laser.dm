@@ -759,6 +759,14 @@ toxic - poisons
 				hit.delStatus("signified")
 			..()
 
+/datum/projectile/laser/plasma/tiro
+	icon_state = "pulse2"
+	shot_sound = 'sound/weapons/laser_d.ogg'
+	shot_number = 3
+	shot_delay = 1
+	cost = 10
+	damage = 7
+	shot_volume = 75
 
 /datum/projectile/laser/plasma/auto
 	icon_state = "miniphaser_med"

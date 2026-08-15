@@ -1514,3 +1514,16 @@ ABSTRACT_TYPE(/datum/projectile/special)
 		src.die(get_turf(O))
 		..()
 
+/datum/projectile/special/tiroblowup
+	name = "kaboom"
+	icon = 'icons/obj/projectiles.dmi'
+	icon_state = "blank"
+	damage = 0
+	cost = 0
+	dissipation_rate = 1
+	dissipation_delay = 0
+	sname = "overload"
+	shot_sound = null
+	shot_number = 1
+	no_hit_message = 0
+	damage_type = D_SPECIAL

@@ -29,6 +29,10 @@
 		icon_state = "bulletround"
 		desc = "An outdated army-issue bullet. Mainly used by war reenactors and space cowboys."
 
+	bullet_45B
+		name = ".45 BAP round"
+		desc = "A modernized army-issue bullet. Mainly used by Frontier military-police forces."
+
 	bullet_38AP
 		name = ".38 AP round"
 		desc = "A more powerful armor-piercing .38 round. Huh. Aren't these illegal?"

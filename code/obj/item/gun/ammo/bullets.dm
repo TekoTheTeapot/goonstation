@@ -547,7 +547,7 @@
 /obj/item/ammo/bullets/bullet_9mm
 	sname = "9×19mm Parabellum"
 	name = "9mm magazine"
-	desc = "A handgun magazine full of 9x19mm rounds, an intermediate pistol cartridge."
+	desc = "A handgun magazine full of 9x19mm rounds, an intermediate pistol cartridge. The custom coupling system on this one makes it incompatible with certain NATO-standard sidearms."
 	icon_state = "branwen_magazine"
 	amount_left = 15
 	max_amount = 15
@@ -571,19 +571,24 @@
 		amount_left = 10
 		max_amount = 10
 
-/obj/item/ammo/bullets/nine_mm_NATO
-	sname = "9mm frangible"
+/obj/item/ammo/bullets/nine_mm_NATO //don't wanna fuck up half the code since there might be some magazines scattered in secret stuff, so pretend it has a proper inheritance tree
+	sname = "9x19mm NATO"
 	name = "9mm frangible magazine"
-	desc = "Some 9mm incapacitating bullets, made of plastic with rubber tips. Despite being sublethal, they can still do damage."
-	icon_state = "pistol_clip"	//9mm_clip that exists already. Available from hacked manufacturers, 'cause these bullets are not good.
+	desc = "A magazine of 9x19mm NATO-standard incapacitating bullets, made of plastic with rubber tips. Despite being sublethal, they can still do damage."
+	icon_state = "pistol_frangible"
 	amount_left = 18
 	max_amount = 18
 	ammo_type = new/datum/projectile/bullet/nine_mm_NATO
-	ammo_cat = AMMO_PISTOL_9MM
+	ammo_cat = AMMO_PISTOL_9MM_NATO
 
 	boomerang //empty clip for the clock_188/boomerang
 		amount_left = 0
 
+	lethal
+		name = "9mm NATO magazine"
+		desc = "A magazine of 9x19mm NATO-standard lethal rounds, meant for high performance with automatic sidearms."
+		icon_state = "pistol_clip"
+		ammo_type = new/datum/projectile/bullet/nine_mm_NATO/lethal
 
 /obj/item/ammo/bullets/nine_mm_surplus
 	sname = "9x19mm Soft Point"
@@ -789,6 +794,16 @@
 	icon_empty = "357-0"
 
 //0.45
+/obj/item/ammo/bullets/b_45
+	sname = ".45 BAP"
+	name = ".45 magazine"
+	desc = "A magazine of .45 BAP bullets, a modernized pistol cartridge."
+	icon_state = "1911_magazine"
+	amount_left = 9
+	max_amount = 9
+	ammo_type = new/datum/projectile/bullet/pistol_45
+	ammo_cat = AMMO_PISTOL_45
+
 /obj/item/ammo/bullets/c_45
 	sname = "Cold .45"
 	name = "Colt .45 speedloader"

@@ -876,44 +876,57 @@ ABSTRACT_TYPE(/obj/item/survival_rifle_barrel)
 
 //9mm/0.355
 /obj/item/gun/kinetic/clock_188
-	desc = "A NATO-surplus 9mm sidearm, still popular with Frontier military-police and peacekeeping forces. Highly customizable, often issued with frangible rounds for use in pressurized compartments."
+	desc = "A NATO-surplus 9mm sidearm, still popular with Frontier military-police and peacekeeping forces. Highly customizable, customarily being issued with either frangible or lethal rounds."
 	name = "\improper Clock 188"
 	icon_state = "glock"
 	item_state = "glock"
 	shoot_delay = 2
 	w_class = W_CLASS_SMALL
 	force = MELEE_DMG_PISTOL
-	ammo_cats = list(AMMO_PISTOL_9MM_ALL)
+	ammo_cats = list(AMMO_PISTOL_9MM_NATO)
 	max_ammo_capacity = 18
 	auto_eject = 1
 	has_empty_state = 1
 	gildable = 1
 	fire_animation = TRUE
-	default_magazine = /obj/item/ammo/bullets/nine_mm_NATO
+	default_magazine = /obj/item/ammo/bullets/nine_mm_NATO/lethal
 	recoil_stacking_enabled = TRUE
 	recoil_strength = 6
 	icon_recoil_cap = 30
 	New()
-		if (prob(70))
+		if (prob(30))
 			icon_state = "glocktan"
 			item_state = "glocktan"
 
-		if(throw_return)
-			default_magazine = /obj/item/ammo/bullets/nine_mm_NATO/boomerang
 		ammo = new default_magazine
-
-		set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO)
-
-		if(throw_return)
-			projectiles = list(current_projectile)
-		else
-			projectiles = list(current_projectile, new/datum/projectile/bullet/nine_mm_NATO/auto)
-			AddComponent(/datum/component/holdertargeting/fullauto, 1.2)
+		set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO/lethal)
+		projectiles = list(current_projectile,new/datum/projectile/bullet/nine_mm_NATO/lethal/auto)
+		AddComponent(/datum/component/holdertargeting/fullauto, 1.2)
 		..()
 
+	attackby(obj/item/ammo/bullets/b, mob/user)  // stolen from the Sirius in order to make this work because I am NOT accounting for 4 types of 9mm ammo, and therefore we have AMMO_PISTOL_9MM_NATO now
+		var/obj/previous_ammo = ammo
+		var/mode_was_auto = (istype(current_projectile, /datum/projectile/bullet/nine_mm_NATO/lethal/auto))  // was previous mode auto fire?
+		..()
+		if(previous_ammo.type != ammo.type)  // we switched ammo types
+			if(istype(ammo, /obj/item/ammo/bullets/nine_mm_NATO)) // we switched from lethal to frangible
+				if(mode_was_auto) // we were in auto fire mode
+					set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO/frangible/auto)
+					projectiles = list(new/datum/projectile/bullet/nine_mm_NATO/frangible, current_projectile)
+				else // we were in single shot mode
+					set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO/frangible)
+					projectiles = list(current_projectile, new/datum/projectile/bullet/nine_mm_NATO/frangible/auto)
+			else // we switched from frangible ammo to lethal
+				if(mode_was_auto) // we were in auto fire mode
+					set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO/lethal/auto)
+					projectiles = list(new/datum/projectile/bullet/nine_mm_NATO/lethal, current_projectile)
+				else // we were in single shot mode
+					set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO/lethal)
+					projectiles = list(current_projectile, new/datum/projectile/bullet/nine_mm_NATO/lethal/auto)
+
 	attack_self(mob/user as mob)
-		..()	//burst shot has a slight spread.
-		if (istype(current_projectile, /datum/projectile/bullet/nine_mm_NATO/auto))
+		..()	//auto fire has a slight spread.
+		if (istype(current_projectile, /datum/projectile/bullet/nine_mm_NATO/lethal/auto))
 			spread_angle = 10
 			shoot_delay = 4
 		else
@@ -1420,7 +1433,7 @@ ABSTRACT_TYPE(/obj/item/survival_rifle_barrel)
 
 	New()
 		ammo = new default_magazine
-		set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO/burst)
+		set_current_projectile(new/datum/projectile/bullet/nine_mm_NATO/frangible/burst)
 		..()
 
 	attack_hand(mob/user)
@@ -1758,6 +1771,32 @@ ABSTRACT_TYPE(/obj/item/survival_rifle_barrel)
 		UpdateIcon()
 
 //0.45
+
+/obj/item/gun/kinetic/bolt_2031
+	name = "\improper Bolt 2031"
+	desc = "A Joint Fleet era sidearm chambered in .45 BAP, renowned for its reliability even in the harshest conditions. Quite popular amongst Frontier military-police forces."
+	icon_state = "1911"
+	item_state = "gun"
+	w_class = W_CLASS_SMALL
+	force = MELEE_DMG_PISTOL
+	ammo_cats = list(AMMO_PISTOL_45)
+	auto_eject = 1
+	has_empty_state = 1
+	spread_angle = 1
+	fire_animation = 1
+	max_ammo_capacity = 9
+	gildable = 1
+	default_magazine = /obj/item/ammo/bullets/b_45
+	recoil_strength = 10
+
+	New()
+		if (prob(30))
+			icon_state = "1911b"
+			item_state = "gun"
+
+		ammo = new default_magazine
+		set_current_projectile(new/datum/projectile/bullet/pistol_45)
+		..()
 
 /obj/item/gun/kinetic/single_action/colt_saa
 	name = "single action army revolver"
@@ -2956,7 +2995,7 @@ ABSTRACT_TYPE(/obj/item/survival_rifle_barrel)
 // agent
 /obj/item/gun/kinetic/pistol
 	name = "\improper Branwen pistol"
-	desc = "A semi-automatic, 9mm caliber service pistol, developed by Mabinogi Firearms Company."
+	desc = "A semi-automatic, 9mm caliber service pistol, developed by Mabinogi Firearms Company. A specialized feeding system can accept all types of pistol grade 9mm ammunition."
 	icon_state = "9mm_pistol"
 	w_class = W_CLASS_NORMAL
 	force = MELEE_DMG_PISTOL

@@ -1815,6 +1815,52 @@ TYPEINFO(/obj/item/gun/energy/neutron)
 		set_current_projectile(new/datum/projectile/special/howitzer)
 		projectiles = list(new/datum/projectile/special/howitzer )
 
+TYPEINFO(/obj/item/gun/energy/tiro0)
+	mats = list("iridiumalloy" = 30,
+				"plutonium" = 15,
+				"electrum" = 25)
+/obj/item/gun/energy/tiro0
+	name = "\improper Tiro N"
+	desc = "It's a laser gun? Or a grenade? You can't tell."
+	w_class = W_CLASS_SMALL
+	icon_state = "tiro_0"
+	item_state = "protopistol"
+	muzzle_flash = "muzzle_flash_bluezap"
+	cell_type = /obj/item/ammo/power_cell/med_plus_power/tiro
+	restrict_cell_type = /obj/item/ammo/power_cell/med_plus_power/tiro
+	spread_angle = 6
+	var/canblowup = FALSE
+
+	New()
+		set_current_projectile(new/datum/projectile/laser/plasma/tiro)
+		projectiles = list(current_projectile, new/datum/projectile/special/tiroblowup)
+		..()
+
+	update_icon()
+		..()
+		if(!src.canblowup)
+			src.icon_state = "tiro_0"
+		else
+			AddComponent(/datum/component/holdertargeting/windup, 1 SECOND)
+			src.icon_state = "tiro_0_primed"
+			suppress_fire_msg = 1
+			muzzle_flash = null
+
+	attack_self(var/mob/M)
+		..()
+		src.canblowup = !src.canblowup
+		UpdateIcon()
+		M.update_inhands()
+
+	Shoot(turf/target, turf/start, mob/user, POX, POY, is_dual_wield, atom/called_target = null)
+		if (src.canblowup)
+			user.show_text(SPAN_ALERT("You trigger the Tiro N's overload mechanism!"))
+			playsound(src.loc, 'sound/weapons/armbomb.ogg', 75, 1, -3)
+
+			SPAWN(2 SECONDS)
+				src.blowthefuckup(7)
+		. = ..()
+
 TYPEINFO(/obj/item/gun/energy/optio1)
 	mats = list("iridiumalloy" = 30,
 				"plutonium" = 15,

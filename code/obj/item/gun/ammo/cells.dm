@@ -103,6 +103,13 @@ TYPEINFO(/obj/item/ammo/power_cell)
 	charge = 250
 	max_charge = 250
 
+	tiro
+		name = "Power Cell - Tiro"
+		desc = "A custom power cell meant for the Tiro N sidearm. Cannot be recharged due to issues with the overloading mechanism."
+		icon = 'icons/obj/items/ammo.dmi'
+		icon_state = "tiro_cell"
+		rechargable = FALSE
+
 /obj/item/ammo/power_cell/high_power
 	name = "Power Cell - 300"
 	desc = "A power cell that holds a max of 300PU"
