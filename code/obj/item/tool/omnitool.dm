@@ -487,7 +487,6 @@ ABSTRACT_TYPE(/datum/omnimode)
 			src.omnimode_pen.font = "Georgia"
 			src.omnimode_pen.color = "#0047ab"
 			src.omnimode_pen.font_color = "#0047ab"
-			src.omnimode_pen.cant_drop = TRUE
 
 		on_attack_after(obj/item/tool/omnitool/omni, atom/target, mob/user)
 			. = ..()
