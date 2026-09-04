@@ -283,6 +283,7 @@
 	animated_changes = TRUE
 
 /obj/item/tool/omnitool/NT
+	name = "NT Multipen"
 	prefix = "nt-omnitool"
 	desc = "The National Notary 'Agrimensor' model pen, for the engineer with class. Comes with patented TrueBlue(TM) ink!"
 	mode_types = list(
@@ -302,7 +303,7 @@ TYPEINFO(/obj/item/tool/omnitool/dualconstruction_device)
 	name = "dualconstruction device"
 	icon_state = "salvager-dual-deconstruction"
 	prefix = "salvager-dual"
-	desc = "A handy part of a salvager's toolkit that can swap between the functionality of a deconstruction device or a soldering iron."
+	desc = "A handy part of a salvager's toolkit that can swap between the functionality of a deconstruction device or a soldering iron. The paint and markings on it have been scraped off."
 	w_class = W_CLASS_NORMAL
 	animated_delay = TRUE
 	mode_types = list(/datum/omnimode/deconstruct, /datum/omnimode/solder)
@@ -312,6 +313,12 @@ TYPEINFO(/obj/item/tool/omnitool/dualconstruction_device)
 		..()
 		src.AddComponent(/datum/component/soldering, 1.5 SECONDS)
 		src.AddComponent(/datum/component/deconstructing, 0.5 SECONDS, 1)
+
+	NT
+		name = "NT dualconstruction device"
+		icon_state = "nt-dual-deconstruction"
+		prefix = "nt-dual"
+		desc = "A handy part of an engineer's toolkit that can swap between the functionality of a deconstruction device or a soldering iron."
 
 // ===========================================================================
 // ========================= Omnitool Mode Datums =========================
@@ -471,7 +478,7 @@ ABSTRACT_TYPE(/datum/omnimode)
 		mode_name = "pen"
 		mode_id = OMNITOOL::MODE_PEN
 		context_icon = "pen"
-		item_type = /obj/item/pen/multipen
+		item_type = /obj/item/pen
 		var/obj/item/pen/omnimode_pen = null
 
 		New(var/obj/item/tool/omnitool/omni)
@@ -480,6 +487,7 @@ ABSTRACT_TYPE(/datum/omnimode)
 			src.omnimode_pen.font = "Georgia"
 			src.omnimode_pen.color = "#0047ab"
 			src.omnimode_pen.font_color = "#0047ab"
+			src.omnimode_pen.cant_drop = TRUE
 
 		on_attack_after(obj/item/tool/omnitool/omni, atom/target, mob/user)
 			. = ..()
