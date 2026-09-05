@@ -287,12 +287,12 @@
 	prefix = "nt-omnitool"
 	desc = "The National Notary 'Agrimensor' model pen, for the engineer with class. Comes with patented TrueBlue(TM) ink!"
 	mode_types = list(
+		/datum/omnimode/pen,
 		/datum/omnimode/crowbar,
 		/datum/omnimode/screwdriver,
 		/datum/omnimode/multitool,
 		/datum/omnimode/wrench,
-		/datum/omnimode/wirecutters,
-		/datum/omnimode/pen
+		/datum/omnimode/wirecutters
 	)
 
 	change_mode(datum/omnimode/mode_new, mob/holder)
