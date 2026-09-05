@@ -492,14 +492,20 @@ ABSTRACT_TYPE(/datum/omnimode)
 				src.omnimode_pen.color = font_color
 				src.omnimode_pen.font_color = font_color
 
+			// By all means this item does not exist -ANNmagedon
+
 			src.omnimode_pen.cant_drop = TRUE
+			src.omnimode_pen.hide_attack = ATTACK_FULLY_HIDDEN
+			src.omnimode_pen.force = 0
+			ADD_FLAG(src.omnimode_pen.flags, SUPPRESSATTACK)
+
 			src.omnimode_pen.name = "Super secret internal pen"
 			src.omnimode_pen.desc = "You should not see this secret internal pen, it voids the warranty on your omnitool! Call 1-800-IMCODER"
 
 		on_attack_after(obj/item/tool/omnitool/omni, atom/target, mob/user)
 			. = ..()
 			target.Attackby(src.omnimode_pen, user, silent = TRUE)
-			src.omnimode_pen.AfterAttack(target, user)
+			src.omnimode_pen.AfterAttack(target, user) // purely to enable pen coating
 
 // ===========================================================================
 // ========================= Omnitool Context Actions =========================
