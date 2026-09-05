@@ -509,7 +509,8 @@ ABSTRACT_TYPE(/datum/omnimode)
 		on_attack_after(obj/item/tool/omnitool/omni, atom/target, mob/user)
 			. = ..()
 			target.Attackby(src.omnimode_pen, user, silent = TRUE)
-			src.omnimode_pen.AfterAttack(target, user) // purely to enable pen coating
+			// This is what you need to add to allow pen dipping, caused some problems with chat logs & consistency, uncomment if its deemed crucial later
+			// src.omnimode_pen.AfterAttack(target, user)
 
 // ===========================================================================
 // ========================= Omnitool Context Actions =========================
