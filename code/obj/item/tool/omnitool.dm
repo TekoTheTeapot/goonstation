@@ -295,6 +295,10 @@
 		/datum/omnimode/pen
 	)
 
+	change_mode(datum/omnimode/mode_new, mob/holder)
+		. = ..()
+		playsound(holder, 'sound/items/penclick.ogg', 50, TRUE)
+
 TYPEINFO(/obj/item/tool/omnitool/dualconstruction_device)
 	analyser_flags = parent_type::analyser_flags | ANALYSER_ELECTRONIC
 	mats = list("dense_property_ultra" = 10,
