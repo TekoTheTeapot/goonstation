@@ -713,7 +713,7 @@ TYPEINFO(/obj/item/clothing/shoes/cowboy/boom)
 			if (src.tank)
 				boutput(user, SPAN_ALERT("There's already a tank installed!"))
 				return
-			if (!istype(W, /obj/item/tank/mini/oxygen || /obj/item/tank/mini/ntjet))
+			if (!istype(W, /obj/item/tank/mini/oxygen) && !istype(W, /obj/item/tank/mini/ntjet))
 				boutput(user, SPAN_ALERT("[W] doesn't fit!"))
 				return
 			boutput(user, SPAN_NOTICE("You install [W] into [src]."))
@@ -775,10 +775,9 @@ TYPEINFO(/obj/item/clothing/shoes/cowboy/boom)
 
 	ntjet
 		name = "NT S.M.B.s"
-		desc = "Nanotrasen Spatial Mobility Boots. Grants propulsion capabilities and magnetic anchoring to the wearer, besides just looking quite stylish."
+		desc = "A pair of Nanotrasen Spatial Mobility Boots, which provide propulsion capabilities and magnetic anchoring to the wearer, besides just looking quite stylish."
 		icon_state = "ntjet"
 		magnetic = 1
-		c_flags = NOSLIP
 		compatible_species = list("cow", "human")
 		kick_bonus = 2
 
