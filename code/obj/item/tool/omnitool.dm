@@ -488,6 +488,8 @@ ABSTRACT_TYPE(/datum/omnimode)
 			src.omnimode_pen.font = "Georgia"
 			src.omnimode_pen.color = "#0047ab"
 			src.omnimode_pen.font_color = "#0047ab"
+			src.omnimode_pen.name = "Super secret internal pen"
+			src.omnimode_pen.desc = "You should not see this secret internal pen, it voids the warranty on your omnitool! Call 1-800-IMCODER"
 
 		on_attack_after(obj/item/tool/omnitool/omni, atom/target, mob/user)
 			. = ..()
