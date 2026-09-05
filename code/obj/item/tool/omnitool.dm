@@ -482,19 +482,23 @@ ABSTRACT_TYPE(/datum/omnimode)
 		item_type = /obj/item/pen
 		var/obj/item/pen/omnimode_pen = null
 
-		New(var/obj/item/tool/omnitool/omni)
+		New(var/obj/item/tool/omnitool/omni, font = "Georgia", font_color = "#0047ab") // Allow other tools to use alt styles
 			. = ..()
 			src.omnimode_pen = new(omni)
-			src.omnimode_pen.font = "Georgia"
-			src.omnimode_pen.color = "#0047ab"
-			src.omnimode_pen.font_color = "#0047ab"
+
+			if(font)
+				src.omnimode_pen.font = font
+			if(font_color)
+				src.omnimode_pen.color = font_color
+				src.omnimode_pen.font_color = font_color
+
 			src.omnimode_pen.cant_drop = TRUE
 			src.omnimode_pen.name = "Super secret internal pen"
 			src.omnimode_pen.desc = "You should not see this secret internal pen, it voids the warranty on your omnitool! Call 1-800-IMCODER"
 
 		on_attack_after(obj/item/tool/omnitool/omni, atom/target, mob/user)
 			. = ..()
-			target.Attackby(src.omnimode_pen, user)
+			target.Attackby(src.omnimode_pen, user, silent = TRUE)
 			src.omnimode_pen.AfterAttack(target, user)
 
 // ===========================================================================
