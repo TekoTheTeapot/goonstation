@@ -723,7 +723,7 @@ ABSTRACT_TYPE(/obj/item/tank/mini)
 /obj/item/tank/mini/ntjet
 	name = "mini tank (NT S.M.B.s)"
 	icon_state = "nt_oxtank"
-	item_state = "mini_oxtank"
+	item_state = "nt_oxtank"
 	c_flags = null
 	desc = "A specialized oxygen mini tank meant for use with NT S.M.B.s. Cannot be worn on belts, but boasts an extended capacity and can still be hooked to secure masks in an emergency."
 	distribute_pressure = 17

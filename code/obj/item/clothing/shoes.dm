@@ -773,7 +773,7 @@ TYPEINFO(/obj/item/clothing/shoes/cowboy/boom)
 		if (dist <= 1)
 			. += "<br>They're currently [src.on ? "on" : "off"].<br>[src.tank ? "The tank's current air pressure reads [MIXTURE_PRESSURE(src.tank.air_contents)]." : SPAN_ALERT("They have no tank attached!")]"
 
-	ntjet
+	NT
 		name = "NT S.M.B.s"
 		desc = "A pair of Nanotrasen Spatial Mobility Boots, which provide propulsion capabilities and magnetic anchoring to the wearer, besides just looking quite stylish."
 		icon_state = "ntjet"
