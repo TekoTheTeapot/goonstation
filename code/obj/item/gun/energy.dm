@@ -1917,8 +1917,8 @@ TYPEINFO(/obj/item/gun/energy/cornicen3)
 	w_class = W_CLASS_NORMAL		//for clarity
 	two_handed = TRUE
 	force = 9
-	cell_type = /obj/item/ammo/power_cell/self_charging/big
-	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/mediumbig
+	cell_type = /obj/item/ammo/power_cell/self_charging/mediumbig
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/medium
 	can_swap_cell = 0
 	rechargeable = 0
 	shoot_delay = 8 DECI SECONDS
@@ -2021,6 +2021,170 @@ TYPEINFO(/obj/item/gun/energy/vexillifer4)
 			if(src.canshoot(user))
 				FLICK("lasercannon-fire", src)
 			. = ..()
+
+/obj/item/gun/energy/elecshotgun
+	name = "\improper Electric Shotgun"
+	desc = "Formal enough for the boardroom. Rugged enough for the battlefield."
+	icon = 'icons/obj/items/guns/energy48x32.dmi'
+	muzzle_flash = null
+	icon_state = "cornicen_close"
+	item_state = "ntgun2"
+	wear_image_icon = 'icons/mob/clothing/back.dmi'
+	flags =  TABLEPASS | CONDUCT | USEDELAY
+	c_flags = ONBACK
+	w_class = W_CLASS_NORMAL		//for clarity
+	two_handed = TRUE
+	force = 9
+	cell_type = /obj/item/ammo/power_cell/self_charging/mediumbig
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/medium
+	can_swap_cell = 0
+	rechargeable = 0
+	can_dual_wield = 0
+	var/extended = FALSE
+
+	New()
+		set_current_projectile(new/datum/projectile/special/spreader/tasershotgunspread/lightningbolt)
+		projectiles = list(current_projectile,new/datum/projectile/laser/plasma/slug)
+		AddComponent(/datum/component/holdertargeting/windup, 1 SECOND)
+		..()
+
+	shoot_point_blank(atom/target, mob/user, second_shot) //yeah point blanking pure electricity is a bad move, even with SMES in this case
+		if (canshoot(user))
+			if (current_projectile.type == /datum/projectile/special/spreader/tasershotgunspread/lightningbolt)
+				for (var/mob/living/mob in viewers(1, user))
+					mob.flash(1.5 SECONDS)
+				user.do_disorient(stamina_damage = 20, disorient = 3 SECONDS)
+				playsound(get_turf(src), 'sound/weapons/ACgun2.ogg', 50, pitch = 1.2)
+		. = ..()
+
+	update_icon()
+		..()
+		if(!src.extended)
+			AddComponent(/datum/component/holdertargeting/windup, 1 SECOND)
+			src.icon_state = "cornicen_close"
+			src.item_state = "cornicen"
+			src.w_class = W_CLASS_NORMAL
+		else
+			RemoveComponentsOfType(/datum/component/holdertargeting/windup)
+			src.icon_state = "cornicen_ext"
+			src.item_state = "cornicen_ext"
+			src.w_class = W_CLASS_BULKY
+
+	attack_self(var/mob/M)
+		..()
+		src.extended = !src.extended
+		UpdateIcon()
+		if(src.extended)
+			FLICK("cornicen_open", src)
+		M.update_inhands()
+
+/obj/item/gun/energy/beamgun
+	name = "\improper Beamgun"
+	desc = "Formal enough for the boardroom. Rugged enough for the battlefield."
+	icon = 'icons/obj/items/guns/energy48x32.dmi'
+	muzzle_flash = null
+	icon_state = "cornicen_close"
+	item_state = "ntgun2"
+	wear_image_icon = 'icons/mob/clothing/back.dmi'
+	flags =  TABLEPASS | CONDUCT | USEDELAY
+	c_flags = ONBACK
+	w_class = W_CLASS_BULKY		//for clarity
+	two_handed = TRUE
+	force = 9
+	cell_type = /obj/item/ammo/power_cell/self_charging/mediumbig
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/mediumbig
+	can_swap_cell = 0
+	rechargeable = 0
+	shoot_delay = 8 DECI SECONDS
+	can_dual_wield = 0
+	spread_angle = 0
+	var/extended = FALSE
+
+	New()
+		set_current_projectile(new/datum/projectile/special/beam)
+		projectiles = list(current_projectile,new/datum/projectile/special/spreader/uniform_burst/circle/plasma)
+		AddComponent(/datum/component/holdertargeting/fullauto, 1) //nobody has to know how it actually works
+		..()
+
+	update_icon()
+		..()
+		if(!src.extended)
+			RemoveComponentsOfType(/datum/component/holdertargeting/windup)
+			src.icon_state = "cornicen_close"
+			src.item_state = "cornicen"
+			src.muzzle_flash = null
+			src.spread_angle = 1
+		else
+			AddComponent(/datum/component/holdertargeting/windup, 1 SECOND)
+			src.icon_state = "cornicen_ext"
+			src.item_state = "cornicen_ext"
+			src.muzzle_flash = "muzzle_flash_bluezap"
+			src.spread_angle = initial(src.spread_angle)
+
+	attack_self(var/mob/M)
+		..()
+		src.extended = !src.extended
+		UpdateIcon()
+		if(src.extended)
+			FLICK("cornicen_open", src)
+		M.update_inhands()
+
+	setupProperties()
+		..()
+		setProperty("carried_movespeed", 1)
+
+/obj/item/gun/energy/telesniper
+	name = "\improper Telesniper"
+	desc = "It's a handgun? Or an smg? You can't tell."
+	icon_state = "signifer_2"
+	w_class = W_CLASS_NORMAL		//for clarity
+	object_flags = NO_ARM_ATTACH
+	force = 8
+	two_handed = 0
+	cell_type = /obj/item/ammo/power_cell/self_charging/mediumbig
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/mediumbig
+	can_swap_cell = 0
+	abilities = list(/obj/ability_button/toggle_scope)
+
+	New()
+		set_current_projectile(new/datum/projectile/laser/plasma/burnburst)
+		projectiles = list(current_projectile,new/datum/projectile/laser/tele)
+		AddComponent(/datum/component/holdertargeting/sniper_scope, 12, 3200, /datum/overlayComposition/sniper_scope, 'sound/weapons/scope.ogg')
+		AddComponent(/datum/component/holdertargeting/windup, 0.7 SECONDS)
+		..()
+
+	update_icon()
+		..()
+		if(!src.two_handed)// && current_projectile.type == /datum/projectile/energy_bolt)
+			RemoveComponentsOfType(/datum/component/holdertargeting/windup)
+			src.icon_state = "signifer_2"
+			src.item_state = "signifer_2"
+			muzzle_flash = "muzzle_flash_bluezap"
+			shoot_delay = 4
+			spread_angle = 5
+			force = 9
+			w_class = W_CLASS_NORMAL
+		else //if (current_projectile.type == /datum/projectile/laser)
+			AddComponent(/datum/component/holdertargeting/windup, 0.7 SECONDS)
+			src.item_state = "signifer_2-smg"
+			src.icon_state = "signifer_2-smg"
+			muzzle_flash = "muzzle_flash_bluezap"
+			spread_angle = 0
+			shoot_delay = 10
+			force = 12
+			slowdown = 5
+			slowdown_time = 5
+			w_class = W_CLASS_BULKY
+
+	attack_self(var/mob/M)
+		if (!setTwoHanded(!src.two_handed))
+			boutput(M, SPAN_ALERT("You need a free hand to switch modes!"))
+			return 0
+
+		..()
+		src.can_dual_wield = !src.two_handed
+		UpdateIcon()
+		M.update_inhands()
 
 /obj/item/gun/energy/tasersmg
 	name = "taser SMG"

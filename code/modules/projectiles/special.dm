@@ -155,13 +155,19 @@ ABSTRACT_TYPE(/datum/projectile/special)
 	has_impact_particles = TRUE
 	// 0 = on spawn
 	// 1 = on impact
+	// 2 = on end
+	// 3 = on end AND impact
 
 	on_launch(var/obj/projectile/P)
 		if(split_type == 0)
 			split(P)
 
 	on_hit(var/atom/A,var/dir,var/obj/projectile/P)
-		if(split_type == 1)
+		if(split_type == 1 || split_type == 3)
+			split(P)
+
+	on_max_range_die(var/obj/projectile/P)
+		if(split_type == 2 || split_type == 3)
 			split(P)
 
 	on_pointblank(obj/projectile/O, mob/target)
@@ -308,6 +314,29 @@ ABSTRACT_TYPE(/datum/projectile/special)
 		spread_projectile_type = /datum/projectile/bullet/cluster
 		split_type = 1
 
+/datum/projectile/special/spreader/uniform_burst/circle/plasma
+	name = "circular plasma"
+	sname = "spreader bolt"
+	damage = 30
+	icon_state = "phaser_med"
+	shot_sound = 'sound/weapons/plasma_gun.ogg'
+	pellets_to_fire = 8
+	dissipation_rate = 6
+	dissipation_delay = 5
+	cost = 50
+	window_pass = 1
+	damage_type = D_ENERGY
+	hit_type = DAMAGE_BURN
+	spread_projectile_type = /datum/projectile/laser/plasma/bouncy
+	split_type = 3
+	impact_image_state = "burn1"
+	hit_mob_sound = 'sound/impact_sounds/burn_sizzle.ogg'
+	hit_object_sound = 'sound/impact_sounds/burn_sizzle.ogg'
+	has_impact_particles = TRUE
+
+	on_hit(atom/hit, dirflag, obj/projectile/P)
+		elecflash(get_turf(P),radius=0, power=6, exclude_center = 0)
+		..()
 
 /datum/projectile/special/spreader/uniform_burst/spikes
 	name = "spike wave"
@@ -1517,3 +1546,112 @@ ABSTRACT_TYPE(/datum/projectile/special)
 		src.die(get_turf(O))
 		..()
 
+/datum/projectile/special/lightningbolt
+	name = "lightning bolt"
+	sname = "arc bolt"
+	damage = 0.0001 //the arcflash handles this
+	damage_type = D_SPECIAL
+	icon_state = "rubberball"
+	shot_sound = null // the arcflash also handles this
+	projectile_speed = 95
+	max_range = 3
+	dissipation_rate = 0
+	hit_ground_chance = 50
+
+	on_hit(atom/hit, angle, obj/projectile/P)
+		. = ..()
+		arcFlashTurf(P.shooter, get_turf(hit), 250000) //this is fine, don't change it
+
+	on_max_range_die(var/obj/projectile/P)
+		. = ..()
+		arcFlashTurf(P.shooter, get_turf(P), 250000)
+
+	burstbolt
+		projectile_speed = 191
+		dissipation_delay = 6
+		shot_number = 10
+		shot_delay = 0.1 SECONDS
+
+/datum/projectile/special/spreader/tasershotgunspread/lightningbolt
+	name = "spread bolt"
+	sname = "arc discharge"
+	cost = 40
+	damage_type = D_SPECIAL
+	pellets_to_fire = 3
+	spread_projectile_type = /datum/projectile/special/lightningbolt
+	split_type = 0
+	shot_sound = null
+	spread_angle = 30
+
+/datum/projectile/special/beam
+	name = "laser beam"
+	sname = "laser beam"
+	icon_state = "blank"
+	cost = 5
+	damage = 10
+	window_pass = 1
+	damage_type = D_ENERGY
+	hit_type = DAMAGE_BURN
+	impact_image_state = "burn1"
+	hit_mob_sound = 'sound/impact_sounds/burn_sizzle.ogg'
+	hit_object_sound = 'sound/impact_sounds/burn_sizzle.ogg'
+	shot_sound = 'sound/impact_sounds/crunchy_sizzle.ogg'
+	dissipation_rate = 11
+	dissipation_delay = 7
+	projectile_speed = 223
+	shot_volume = 75
+	fullauto_valid = 1
+
+	on_hit(atom/hit, angle, obj/projectile/P)
+		. = ..()
+		var/obj/railgun_trg_dummy/start = new(P.orig_turf)
+		var/obj/railgun_trg_dummy/end = new(get_turf(hit))
+
+		var/Sx = P.orig_turf.x*32 + P.orig_turf.pixel_x
+		var/Sy = P.orig_turf.y*32 + P.orig_turf.pixel_y
+
+		var/Hx = hit.x*32 + hit.pixel_x
+		var/Hy = hit.y*32 + hit.pixel_y
+
+		var/dist = sqrt((Hx-Sx)**2 + (Hy-Sy)**2)
+
+		var/Px = Sx + sin(P.angle) * dist
+		var/Py = Sy + cos(P.angle) * dist
+
+		var/list/affected = drawLineObj(start, end, /obj/line_obj/railgun ,'icons/obj/projectiles.dmi',"WholeTrail",1,0,"HalfStartTrail","HalfEndTrail",OBJ_LAYER, 0, Sx, Sy, Px, Py)
+		for(var/obj/O in affected)
+			O.color = list(0,0,0, 0,0,0, 0,0,0, 0.4, 0.8, 1.0)
+			animate(O, 1 SECOND, alpha = 0, easing = SINE_EASING | EASE_IN)
+		SPAWN(0.1 SECONDS)
+			for(var/obj/O in affected)
+				O.alpha = initial(O.alpha)
+				qdel(O)
+			qdel(start)
+			qdel(end)
+
+	on_max_range_die(var/obj/projectile/P)
+		. = ..()
+		var/obj/railgun_trg_dummy/start = new(P.orig_turf)
+		var/obj/railgun_trg_dummy/end = new(get_turf(P))
+
+		var/Sx = P.orig_turf.x*32 + P.orig_turf.pixel_x
+		var/Sy = P.orig_turf.y*32 + P.orig_turf.pixel_y
+
+		var/Hx = (get_turf(P)).x*32 + (get_turf(P)).pixel_x
+		var/Hy = (get_turf(P)).y*32 + (get_turf(P)).pixel_y
+
+		var/dist = sqrt((Hx-Sx)**2 + (Hy-Sy)**2)
+
+		var/Px = Sx + sin(P.angle) * dist
+		var/Py = Sy + cos(P.angle) * dist
+
+		var/list/affected = drawLineObj(start, end, /obj/line_obj/railgun ,'icons/obj/projectiles.dmi',"WholeTrail",1,0,"HalfStartTrail","HalfEndTrail",OBJ_LAYER, 0, Sx, Sy, Px, Py)
+		for(var/obj/O in affected)
+			O.color = list(0,0,0, 0,0,0, 0,0,0, 0.4, 0.8, 1.0)
+			animate(O, 1 SECOND, alpha = 0, easing = SINE_EASING | EASE_IN)
+		SPAWN(0.1 SECONDS)
+			for(var/obj/O in affected)
+				O.alpha = initial(O.alpha)
+				qdel(O)
+			qdel(start)
+			qdel(end)

@@ -761,28 +761,34 @@ toxic - poisons
 
 
 /datum/projectile/laser/plasma/auto
+	sname = "full auto"
 	icon_state = "miniphaser_med"
 	shot_sound = 'sound/weapons/lasersound.ogg'
 	dissipation_delay = 4
 	dissipation_rate = 2
-	cost = 10
+	cost = 8
 	damage = 15
 	fullauto_valid = 1
 	shot_volume = 75
 
 /datum/projectile/laser/plasma/burst
-	cost = 60
+	sname = "burst fire"
+	cost = 25
 	damage = 20
-	shot_number = 4
+	shot_number = 3
 	shot_delay = 1
 	shot_volume = 75
 	projectile_speed = 42
 
-	on_hit(atom/movable/hit, dir, datum/projectile/P)
+	on_hit(atom/hit, dir, obj/projectile/P)
 		. = ..()
+		var/mob/living/L = hit
 		if(hit.hasStatus("cornicened2"))
 			elecflash(get_turf(hit),radius=0, power=6, exclude_center = 0)
-			random_brute_damage(hit, rand(10,20), 0)
+			if(!istype(L))
+				return
+			else
+				L.shock(P.shooter, 5001, "chest", 0, 1)
 			hit.delStatus("cornicened")
 			hit.delStatus("cornicened2")
 		else
@@ -791,8 +797,8 @@ toxic - poisons
 /datum/projectile/laser/ntso_cannon
 	name = "heavy assault laser"
 	icon_state = "u_laser"
-	damage = 80
-	cost = 65
+	damage = 50
+	cost = 5 //CHANGE THIS
 	dissipation_delay = 10
 	brightness = 0
 	sname = "heavy laser"
@@ -801,11 +807,21 @@ toxic - poisons
 	color_green = 0
 	color_blue = 1
 
-	on_hit(atom/hit, dir, obj/projectile/P)
-		elecflash(get_turf(hit),radius=0, power=10, exclude_center = 0)
-		hit.ex_act(2)
-		P.die() //explicitly kill projectile - not a mining laser
-
+	on_hit(atom/hit, dir, obj/projectile/proj)
+		var/turf/there = get_turf(hit) || get_turf(proj)
+		elecflash(there, 1, 6, 0)
+		fireflash(there, 0, 100000, chemfire = CHEM_FIRE_BLUE)
+		proj.die()
+		var/mob/living/oshawarning = hit
+		if(!istype(oshawarning))
+			return
+		var/actual_wattage = oshawarning.get_ranged_protection()>=3 ? 2475000 : 2500000
+		var/shock_damage = oshawarning.shock(proj.shooter, actual_wattage, "chest",1,1)
+		if(shock_damage == 0)
+			oshawarning.do_disorient(knockdown = 3 SECONDS, disorient = 10 SECONDS)
+		else if(!QDELETED(oshawarning) && shock_damage > 99)
+			make_cleanable(/obj/decal/cleanable/ash,oshawarning.loc)
+			oshawarning.elecgib()
 
 /datum/projectile/laser/makeshift
 	cost = 1250
@@ -831,3 +847,108 @@ toxic - poisons
 	sname = "burst laser"
 	cost = 15
 	shot_number = 3
+
+/datum/projectile/laser/plasma/slug
+	damage = 60
+	name = "plasma slug"
+	sname = "plasma slug"
+	dissipation_delay = 3
+	dissipation_rate = 10
+	cost = 20
+	projectile_speed = 30
+
+	tick(var/obj/projectile/P)
+		if(GET_DIST(P, P.orig_turf) >= 2) //no shocking yourself
+			elecflash(get_turf(P),radius=0, power=4, exclude_center = 0)
+
+	on_hit(atom/hit, dir, obj/projectile/P)
+		if(P.power >= 50)
+			arcFlashTurf(P.orig_turf, get_turf(hit), 2501) //extra 5 damage and some stam for being close
+			elecflash(get_turf(hit),radius=1, power=6, exclude_center = 0)
+		else
+			elecflash(get_turf(hit),radius=0, power=6, exclude_center = 0)
+
+/datum/projectile/laser/plasma/bouncy //works oddly if used on a normal weapon, meant for the spreader projectile
+	name = "ricochet plasma bolt"
+	sname = "ricochet plasma bolt"
+	icon_state = "miniphaser_med"
+	shot_sound = null
+	dissipation_rate = 0
+	max_range = 7
+	cost = 10
+	damage = 10
+	shot_volume = 75
+
+	on_hit(atom/hit, dirflag, obj/projectile/proj)
+		if(!ismob(hit))
+			shot_volume = 0
+			shoot_reflected_bounce(proj, hit, 2, PROJ_NO_HEADON_BOUNCE)
+			shot_volume = 100
+		if(proj.reflectcount >= 1)
+			elecflash(get_turf(hit), radius=0, power=3, exclude_center = 0)
+
+	get_power(obj/projectile/proj, atom/A)
+		return 10 + 5 *proj.reflectcount
+
+/datum/projectile/laser/plasma/burnburst
+	name = "burning plasma"
+	sname = "plasma burst"
+	icon_state = "miniphaser_med"
+	shot_sound = 'sound/weapons/lasersound.ogg'
+	dissipation_delay = 4
+	dissipation_rate = 7
+	cost = 20
+	damage = 20
+	shot_number = 3
+	shot_volume = 75
+	projectile_speed = 42
+
+	on_hit(atom/hit)
+		var/mob/living/L = hit
+		if (!istype(L))
+			return
+		if(L.getStatusDuration("burning"))
+			L.changeStatus("burning", 8 SECONDS)
+		else
+			L.changeStatus("burning", 3 SECONDS)
+
+/datum/projectile/laser/tele
+	name = "teleporting laser"
+	sname = "warping laser"
+	icon_state = "laser_anim_blue"
+	shot_sound = 'sound/weapons/heavyion.ogg'
+	dissipation_rate = 0 //yeah I'm doing it too, screw you sniper
+	armor_ignored = 1 //teleports through your armor
+	impact_image_state = null
+	cost = 40
+	damage = 41
+	projectile_speed = 72
+	shot_volume = 75
+	has_impact_particles = FALSE
+
+	on_launch(obj/projectile/P)
+		P.AddComponent(/datum/component/sniper_wallpierce, 3, 1)
+
+	on_hit(atom/hit, dirflag, var/obj/projectile/P)
+		showswirl_error(hit)
+		if(!ismob(hit))
+			animate_portal_tele(hit)
+		var/mob/living/L = hit
+		if(P.power < 41) //if it has pierced a wall
+			if (!istype(L))
+				return
+			if(L.getStatusDuration("burning"))
+				L.changeStatus("burning", 40 SECONDS)
+			else
+				L.changeStatus("burning", 10 SECONDS)
+			L.do_disorient(stamina_damage = 10, disorient = 3 SECONDS)
+		else
+			if (!istype(L))
+				return
+			if(L.getStatusDuration("burning"))
+				L.changeStatus("burning", 60 SECONDS)
+			else
+				L.changeStatus("burning", 20 SECONDS)
+			L.do_disorient(stamina_damage = 10, disorient = 5 SECONDS)
+			fireflash(get_turf(L) || get_turf(P), 0, 10000, chemfire = CHEM_FIRE_BLUE) //bit extra for avoiding walls
+		..()

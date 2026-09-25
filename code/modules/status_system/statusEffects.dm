@@ -1829,7 +1829,7 @@
 		. = ..()
 
 		stacks++
-		if(stacks >= 3)
+		if(stacks >= 2)
 			owner.setStatus("cornicened2")
 
 /datum/statusEffect/cornicened2
