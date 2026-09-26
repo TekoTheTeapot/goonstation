@@ -784,7 +784,6 @@ toxic - poisons
 		. = ..()
 		var/mob/living/L = hit
 		if(hit.hasStatus("cornicened2"))
-			elecflash(get_turf(hit),radius=0, power=6, exclude_center = 0)
 			if(!istype(L))
 				return
 			else
@@ -801,8 +800,10 @@ toxic - poisons
 	cost = 5 //CHANGE THIS
 	dissipation_delay = 10
 	brightness = 0
+	shot_sound_extrarange = 1
 	sname = "heavy laser"
-	shot_sound = 'sound/weapons/Laser.ogg'
+	shot_sound = 'sound/weapons/energy/howitzer_shot.ogg'
+	shot_pitch = 0.7
 	color_red = 0
 	color_green = 0
 	color_blue = 1
@@ -852,21 +853,25 @@ toxic - poisons
 	damage = 60
 	name = "plasma slug"
 	sname = "plasma slug"
-	dissipation_delay = 3
+	dissipation_delay = 2
 	dissipation_rate = 10
 	cost = 20
 	projectile_speed = 30
 
 	tick(var/obj/projectile/P)
 		if(GET_DIST(P, P.orig_turf) >= 2) //no shocking yourself
-			elecflash(get_turf(P),radius=0, power=4, exclude_center = 0)
+			elecflash(get_turf(P),radius=0, power=2, exclude_center = 0)
 
 	on_hit(atom/hit, dir, obj/projectile/P)
 		if(P.power >= 50)
-			arcFlashTurf(P.orig_turf, get_turf(hit), 2501) //extra 5 damage and some stam for being close
-			elecflash(get_turf(hit),radius=1, power=6, exclude_center = 0)
+			elecflash(get_turf(hit),radius=1, power=4, exclude_center = 0) //some AoE for being close
+			var/mob/living/L = hit
+			if (!istype(L))
+				return
+			else
+				L.shock(P.shooter, 2501, "chest", 0.2, 1) //and an extra 5 burn
 		else
-			elecflash(get_turf(hit),radius=0, power=6, exclude_center = 0)
+			elecflash(get_turf(hit),radius=0, power=4, exclude_center = 0)
 
 /datum/projectile/laser/plasma/bouncy //works oddly if used on a normal weapon, meant for the spreader projectile
 	name = "ricochet plasma bolt"
@@ -884,8 +889,8 @@ toxic - poisons
 			shot_volume = 0
 			shoot_reflected_bounce(proj, hit, 2, PROJ_NO_HEADON_BOUNCE)
 			shot_volume = 100
-		if(proj.reflectcount >= 1)
-			elecflash(get_turf(hit), radius=0, power=3, exclude_center = 0)
+		if(proj.reflectcount >= 2)
+			elecflash(get_turf(hit), radius=0, power=4, exclude_center = 0)
 
 	get_power(obj/projectile/proj, atom/A)
 		return 10 + 5 *proj.reflectcount
@@ -899,7 +904,7 @@ toxic - poisons
 	dissipation_rate = 7
 	cost = 20
 	damage = 20
-	shot_number = 3
+	shot_number = 2
 	shot_volume = 75
 	projectile_speed = 42
 
@@ -916,10 +921,10 @@ toxic - poisons
 	name = "teleporting laser"
 	sname = "warping laser"
 	icon_state = "laser_anim_blue"
-	shot_sound = 'sound/weapons/heavyion.ogg'
+	shot_sound = 'sound/weapons/snipershot.ogg'
 	dissipation_rate = 0 //yeah I'm doing it too, screw you sniper
 	armor_ignored = 1 //teleports through your armor
-	impact_image_state = null
+	impact_image_state = null //never actually hits things
 	cost = 40
 	damage = 41
 	projectile_speed = 72
@@ -934,21 +939,13 @@ toxic - poisons
 		if(!ismob(hit))
 			animate_portal_tele(hit)
 		var/mob/living/L = hit
-		if(P.power < 41) //if it has pierced a wall
-			if (!istype(L))
-				return
-			if(L.getStatusDuration("burning"))
-				L.changeStatus("burning", 40 SECONDS)
-			else
-				L.changeStatus("burning", 10 SECONDS)
-			L.do_disorient(stamina_damage = 10, disorient = 3 SECONDS)
+		if (!istype(L))
+			return
+		L.do_disorient(stamina_damage = 20, disorient = 3 SECONDS)
+		if(L.getStatusDuration("burning"))
+			L.changeStatus("burning", 40 SECONDS)
 		else
-			if (!istype(L))
-				return
-			if(L.getStatusDuration("burning"))
-				L.changeStatus("burning", 60 SECONDS)
-			else
-				L.changeStatus("burning", 20 SECONDS)
-			L.do_disorient(stamina_damage = 10, disorient = 5 SECONDS)
-			fireflash(get_turf(L) || get_turf(P), 0, 10000, chemfire = CHEM_FIRE_BLUE) //bit extra for avoiding walls
+			L.changeStatus("burning", 20 SECONDS)
+		if(P.power == 41) //if it has not pierced a wall
+			fireflash(get_turf(L) || get_turf(P), 0, 5000, chemfire = CHEM_FIRE_BLUE) //bit extra for avoiding walls
 		..()

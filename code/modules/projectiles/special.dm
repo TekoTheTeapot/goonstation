@@ -322,7 +322,7 @@ ABSTRACT_TYPE(/datum/projectile/special)
 	shot_sound = 'sound/weapons/plasma_gun.ogg'
 	pellets_to_fire = 8
 	dissipation_rate = 6
-	dissipation_delay = 5
+	dissipation_delay = 4
 	cost = 50
 	window_pass = 1
 	damage_type = D_ENERGY
@@ -335,7 +335,7 @@ ABSTRACT_TYPE(/datum/projectile/special)
 	has_impact_particles = TRUE
 
 	on_hit(atom/hit, dirflag, obj/projectile/P)
-		elecflash(get_turf(P),radius=0, power=6, exclude_center = 0)
+		elecflash(get_turf(P),radius=0, power=4, exclude_center = 0)
 		..()
 
 /datum/projectile/special/spreader/uniform_burst/spikes
@@ -1556,32 +1556,40 @@ ABSTRACT_TYPE(/datum/projectile/special)
 	projectile_speed = 95
 	max_range = 3
 	dissipation_rate = 0
-	hit_ground_chance = 50
+	hit_ground_chance = 0
 
 	on_hit(atom/hit, angle, obj/projectile/P)
 		. = ..()
-		arcFlashTurf(P.shooter, get_turf(hit), 250000) //this is fine, don't change it
+		arcFlashTurf(P.shooter, get_turf(hit), 0) //this is fine, don't change it
+		elecflash(get_turf(hit),radius=0, power=4, exclude_center = 0)
+		var/mob/living/L = hit
+		if(!istype(L))
+			return
+		L.shock(P.shooter, 5001, "chest", 0, 1)
+		if (issilicon(L) || isrobocritter(L))
+			L.emp_act() //so it damages robotics
 
 	on_max_range_die(var/obj/projectile/P)
 		. = ..()
-		arcFlashTurf(P.shooter, get_turf(P), 250000)
-
-	burstbolt
-		projectile_speed = 191
-		dissipation_delay = 6
-		shot_number = 10
-		shot_delay = 0.1 SECONDS
+		arcFlashTurf(P.shooter, get_turf(P), 0)
+		elecflash(get_turf(P),radius=0, power=4, exclude_center = 0)
 
 /datum/projectile/special/spreader/tasershotgunspread/lightningbolt
 	name = "spread bolt"
 	sname = "arc discharge"
 	cost = 40
+	stun = 0
+	damage = 0.0001
 	damage_type = D_SPECIAL
 	pellets_to_fire = 3
 	spread_projectile_type = /datum/projectile/special/lightningbolt
 	split_type = 0
 	shot_sound = null
 	spread_angle = 30
+
+	on_pointblank(var/obj/projectile/O, var/mob/target)
+		elecflash(get_turf(target),radius=1, power=4, exclude_center = 1)
+		..()
 
 /datum/projectile/special/beam
 	name = "laser beam"
@@ -1595,11 +1603,12 @@ ABSTRACT_TYPE(/datum/projectile/special)
 	impact_image_state = "burn1"
 	hit_mob_sound = 'sound/impact_sounds/burn_sizzle.ogg'
 	hit_object_sound = 'sound/impact_sounds/burn_sizzle.ogg'
-	shot_sound = 'sound/impact_sounds/crunchy_sizzle.ogg'
+	shot_sound = 'sound/weapons/laser_f.ogg'
 	dissipation_rate = 11
 	dissipation_delay = 7
 	projectile_speed = 223
 	shot_volume = 75
+	hit_ground_chance = 100
 	fullauto_valid = 1
 
 	on_hit(atom/hit, angle, obj/projectile/P)
@@ -1628,6 +1637,16 @@ ABSTRACT_TYPE(/datum/projectile/special)
 				qdel(O)
 			qdel(start)
 			qdel(end)
+		var/mob/living/L = hit
+		if(hit.hasStatus("beamgunned2"))
+			if(!istype(L))
+				return
+			else
+				L.changeStatus("burning", 10 SECONDS)
+			hit.delStatus("beamgunned")
+			hit.delStatus("beamgunned2")
+		else
+			hit.setStatus("beamgunned")
 
 	on_max_range_die(var/obj/projectile/P)
 		. = ..()

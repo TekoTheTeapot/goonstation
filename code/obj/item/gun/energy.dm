@@ -2053,7 +2053,7 @@ TYPEINFO(/obj/item/gun/energy/vexillifer4)
 			if (current_projectile.type == /datum/projectile/special/spreader/tasershotgunspread/lightningbolt)
 				for (var/mob/living/mob in viewers(1, user))
 					mob.flash(1.5 SECONDS)
-				user.do_disorient(stamina_damage = 20, disorient = 3 SECONDS)
+				user.do_disorient(disorient = 2 SECONDS)
 				playsound(get_turf(src), 'sound/weapons/ACgun2.ogg', 50, pitch = 1.2)
 		. = ..()
 

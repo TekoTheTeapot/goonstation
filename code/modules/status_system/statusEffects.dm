@@ -1840,6 +1840,31 @@
 	maxDuration = 2 SECONDS
 	effect_quality = STATUS_QUALITY_NEGATIVE
 
+/datum/statusEffect/beamgunned
+	id = "beamgunned"
+	name = "Beamgunner"
+	desc = "You should never be seeing this!"
+	icon_state = null
+	visible = FALSE
+	var/stacks = 1
+	maxDuration = 2 SECONDS
+	effect_quality = STATUS_QUALITY_NEGATIVE
+
+	onChange(optional)
+		. = ..()
+
+		stacks++
+		if(stacks >= 3)
+			owner.setStatus("beamgunned2")
+
+/datum/statusEffect/beamgunned2
+	id = "beamgunned2"
+	name = "Beamgunned2"
+	visible = FALSE
+	desc = "You should never be seeing this!"
+	maxDuration = 2 SECONDS
+	effect_quality = STATUS_QUALITY_NEGATIVE
+
 /datum/statusEffect/shivering
 	id = "shivering"
 	name = "Shivering"
