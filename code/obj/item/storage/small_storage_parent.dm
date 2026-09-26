@@ -92,7 +92,7 @@
 	name = "nanotrasen emergency kit"
 	icon_state = "ntebox"
 	desc = "A specialized NT emergency kit, containing all you should need to survive during a crisis. Even includes a mandatory ceremonial beret! How optimistic."
-	spawn_contents = list(/obj/item/clothing/mask/breath, /obj/item/tank/pocket/extended/oxygen, /obj/item/clothing/head/NTberet, /obj/item/crowbar)
+	spawn_contents = list(/obj/item/clothing/mask/breath, /obj/item/tank/pocket/extended/oxygen, /obj/item/clothing/head/NTberet, /obj/item/crowbar, /obj/item/device/flash)
 
 #ifdef MAP_OVERRIDE_NADIR //guarantee protective gear
 	make_my_stuff()

@@ -96,10 +96,9 @@ ABSTRACT_TYPE(/datum/job/special/nt)
 	slot_poc2 = list(/obj/item/tank/pocket/extended/oxygen)
 	/// gets placed within the mob's id slot by put_id_in_pda, required because they need both of their pockets for the oxy (on spawn readiness is required) & pouch ("correct" slot for pouch)
 	items_in_mob = list(/obj/item/device/pda2/nt/medical)
-	items_in_backpack = list(/obj/item/device/flash,
+	items_in_backpack = list(/obj/item/storage/box/casualties,
 							/obj/item/storage/firstaid/docbag/field_surgeon/NT,
-							/obj/item/extinguisher,
-							/obj/item/storage/box/casualties)
+							/obj/item/extinguisher)
 
 // Use this one for late respawns to deal with existing antags. they are weaker cause they dont get a laser rifle or frags
 /datum/job/special/nt/security_consultant
