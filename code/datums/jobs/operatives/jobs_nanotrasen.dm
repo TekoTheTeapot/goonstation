@@ -67,7 +67,6 @@ ABSTRACT_TYPE(/datum/job/special/nt)
 	slot_poc1 = list(/obj/item/tank/pocket/extended/oxygen)
 	slot_poc2 = list(/obj/item/device/pda2/nt/engineer)
 	items_in_backpack = list(/obj/item/storage/firstaid/regular,
-							/obj/item/device/flash,
 							/obj/item/sheet/steel/fullstack,
 							/obj/item/sheet/glass/reinforced/fullstack)
 
