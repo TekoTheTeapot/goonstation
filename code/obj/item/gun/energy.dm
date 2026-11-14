@@ -1815,6 +1815,26 @@ TYPEINFO(/obj/item/gun/energy/neutron)
 		set_current_projectile(new/datum/projectile/special/howitzer)
 		projectiles = list(new/datum/projectile/special/howitzer )
 
+/obj/item/gun/energy/tribunus1
+	name = "\improper Tribunus I"
+	desc = "It looks familiar, somehow. Huh."
+	w_class = W_CLASS_SMALL
+	icon_state = "tribunus_1"
+	item_state = "protopistol"
+	cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer/bad
+	can_swap_cell = 0
+
+	New()
+		set_current_projectile(new/datum/projectile/bullet/tribunus)
+		projectiles = list(current_projectile, new/datum/projectile/bullet/tribunus/pierce)
+		..()
+
+	shoot(turf/target, turf/start, mob/user, POX, POY, is_dual_wield, atom/called_target = null)
+		if(src.canshoot(user))
+			FLICK("tribunus_firing", src)
+			. = ..()
+
 TYPEINFO(/obj/item/gun/energy/optio1)
 	mats = list("iridiumalloy" = 30,
 				"plutonium" = 15,
@@ -1952,6 +1972,111 @@ TYPEINFO(/obj/item/gun/energy/cornicen3)
 		if(src.extended)
 			FLICK("cornicen_open", src)
 		M.update_inhands()
+
+/obj/item/gun/energy/draconarius2
+	name = "\improper Draconarius II"
+	desc = "Formal enough for the boardroom. Rugged enough for the battlefield."
+	icon = 'icons/obj/items/guns/energy.dmi'
+	muzzle_flash = null
+	icon_state = "draconarius_2"
+	item_state = "ntgun2"
+	wear_image_icon = 'icons/mob/clothing/back.dmi'
+	flags =  TABLEPASS | CONDUCT | USEDELAY
+	c_flags = ONBACK
+	w_class = W_CLASS_NORMAL		//for clarity
+	two_handed = TRUE
+	force = 9
+	hit_type = DAMAGE_BURN
+	cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer/bad
+	can_swap_cell = 0
+	rechargeable = 0
+	spread_angle = 3
+	can_dual_wield = 0
+	var/extended = FALSE
+
+	New()
+		set_current_projectile(new/datum/projectile/special/plasmastream)
+		projectiles = list(current_projectile,new/datum/projectile/special/plasmaburst)
+		AddComponent(/datum/component/holdertargeting/fullauto, 4)
+		..()
+
+	update_icon()
+		..()
+		if(!src.extended)
+			src.icon_state = "draconarius_2"
+			src.item_state = "cornicen"
+			src.spread_angle = initial(src.spread_angle)
+		else
+			src.icon_state = "draconarius_2-burst"
+			src.item_state = "cornicen_ext"
+			src.spread_angle = 3
+
+	attack_self(var/mob/M)
+		..()
+		src.extended = !src.extended
+		UpdateIcon()
+		if(src.extended)
+			FLICK("draconarius2_S-B", src)
+		M.update_inhands()
+
+	shoot(turf/target, turf/start, mob/user, POX, POY, is_dual_wield, atom/called_target = null)
+		if(src.canshoot(user) && src.extended)
+			FLICK("draconarius2-burstfire", src)
+		else if(src.canshoot(user) && !src.extended)
+			FLICK("draconarius2-streamfire", src)
+		. = ..()
+
+/obj/item/gun/energy/venator2
+	name = "\improper Venator II"
+	desc = "Formal enough for the boardroom. Rugged enough for the battlefield."
+	icon = 'icons/obj/items/guns/energy48x32.dmi'
+	muzzle_flash = "muzzle_flash_bluezap"
+	icon_state = "cornicen_close"
+	item_state = "ntgun2"
+	wear_image_icon = 'icons/mob/clothing/back.dmi'
+	flags =  TABLEPASS | CONDUCT | USEDELAY
+	c_flags = ONBACK
+	w_class = W_CLASS_NORMAL		//for clarity
+	two_handed = TRUE
+	force = 9
+	cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer
+	from_frame_cell_type = /obj/item/ammo/power_cell/self_charging/ntso_signifer/bad
+	can_swap_cell = 0
+	rechargeable = 0
+	shoot_delay = 8 DECI SECONDS
+	spread_angle = 3
+	can_dual_wield = 0
+	var/extended = FALSE
+
+	New()
+		set_current_projectile(new/datum/projectile/energy_bolt/electromag_burst)
+		projectiles = list(current_projectile,new/datum/projectile/energy_bolt/electromag_aoe)
+		..()
+
+	update_icon()
+		..()
+		if(!src.extended)
+			RemoveComponentsOfType(/datum/component/holdertargeting/windup)
+			src.icon_state = "cornicen_close"
+			src.item_state = "cornicen"
+			src.spread_angle = initial(src.spread_angle)
+		else
+			AddComponent(/datum/component/holdertargeting/windup, 0.7 SECOND)
+			src.icon_state = "cornicen_ext"
+			src.item_state = "cornicen_ext"
+			src.spread_angle = 0
+
+	attack_self(var/mob/M)
+		..()
+		src.extended = !src.extended
+		UpdateIcon()
+		if(src.extended)
+			FLICK("cornicen_open", src)
+		M.update_inhands()
+
+	emp_act()
+		return
 
 TYPEINFO(/obj/item/gun/energy/vexillifer4)
 	mats = list("iridiumalloy" = 50,

@@ -1502,3 +1502,56 @@ ABSTRACT_TYPE(/datum/projectile/special)
 		src.die(get_turf(O))
 		..()
 
+/datum/projectile/special/plasmastream
+	name = "inferno bomb"
+	sname = "volatile plasma stream"
+	icon_state = "heavyion"
+	shot_sound = 'sound/weapons/flamethrower.ogg'
+	damage = 0.001
+	cost = 10
+	brightness = 1
+	fullauto_valid = 1
+	projectile_speed = 33
+	damage_type = D_BURNING
+	dissipation_delay = 10
+
+	on_launch(obj/projectile/O)
+		. = ..()
+		O.AddComponent(/datum/component/gaseous_projectile)
+
+	tick(var/obj/projectile/P)
+		if(GET_DIST(P, P.orig_turf) >= 1)
+			fireflash(get_turf(P), 0, chemfire = CHEM_FIRE_BLUE)
+
+	on_hit(atom/hit, direction, obj/projectile/P)
+		if (isabomination(hit) || istype(hit, /obj/blob) || ismartian(hit))
+			fireflash(get_turf(hit) || get_turf(P), 0, 4000, chemfire = CHEM_FIRE_BLUE)
+
+/datum/projectile/special/plasmaburst
+	name = "flare"
+	sname = "volatile plasma burst"
+	shot_sound = 'sound/weapons/flaregun.ogg'
+	damage = 10
+	cost = 50
+	shot_number = 3
+	damage_type = D_BURNING
+	brightness = 1
+	dissipation_delay = 8
+	shot_volume = 50
+	icon_state = "cyan_bolt"
+
+	on_hit(atom/hit, direction, obj/projectile/P)
+		. = ..()
+		if (issilicon(hit) || isrobocritter(hit))
+			return
+		else
+			if (isabomination(hit) || istype(hit, /obj/blob) || ismartian(hit))
+				fireflash(get_turf(hit) || get_turf(P), 0, 4000, chemfire = CHEM_FIRE_BLUE)
+			else
+				fireflash(get_turf(hit) || get_turf(P), 0, chemfire = CHEM_FIRE_BLUE)
+			if(hit.hasStatus("draconized2"))
+				fireflash(get_turf(hit) || get_turf(P), 1, chemfire = CHEM_FIRE_BLUE)
+				hit.delStatus("draconized")
+				hit.delStatus("draconized2")
+			else
+				hit.setStatus("draconized")

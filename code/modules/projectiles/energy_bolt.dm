@@ -475,3 +475,49 @@ toxic - poisons
 			L.changeStatus("disorient", 2 SECOND)
 			L.changeStatus("slowed", 1.5 SECOND)
 		return
+
+/datum/projectile/energy_bolt/electromag_burst
+	name = "ion bolt"
+	icon = 'icons/obj/projectiles.dmi'
+	icon_state = "pulse2"
+	stun = 0.001
+	cost = 40
+	dissipation_delay = 8
+	shot_sound = 'sound/weapons/Taser.ogg'
+	shot_number = 2
+	damage_type = D_SPECIAL
+	brightness = 1
+	energy_particles_override = TRUE
+
+	disruption = 12
+
+	on_hit(atom/hit, angle, var/obj/projectile/P)
+		hit.emp_act()
+
+/datum/projectile/energy_bolt/electromag_aoe
+	name = "pulse"
+	icon = 'icons/obj/projectiles.dmi'
+	icon_state = "pulse"
+	stun = 0.001
+	cost = 50
+	dissipation_delay = 8
+	sname = "electromagnetic pulse"
+	shot_sound = 'sound/weapons/heavyion.ogg'
+	damage_type = D_SPECIAL
+	brightness = 1
+	energy_particles_override = TRUE
+
+	disruption = 24
+
+	on_hit(atom/O, angle, var/obj/projectile/P)
+		emp_aoe(O, P)
+		O.emp_act()
+
+	on_max_range_die(obj/projectile/O)
+		emp_aoe(O, O)
+
+	proc/emp_aoe(atom/O, var/obj/projectile/P)
+		var/turf/T = get_turf(P)
+		for(var/turf/tile in range(1, T))
+			for(var/atom/movable/M in tile.contents)
+				M.emp_act()

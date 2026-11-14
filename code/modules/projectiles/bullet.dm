@@ -2563,3 +2563,36 @@ ABSTRACT_TYPE(/datum/projectile/bullet/homing/rocket)
 
 	on_launch(obj/projectile/O)
 		O.AddComponent(/datum/component/sniper_wallpierce, 3, 0, TRUE)
+
+/datum/projectile/bullet/tribunus
+	name = "bullet"
+	sname = "execution round"
+	damage = 40
+	cost = 20
+	icon_state = "bullet"
+	damage_type = D_KINETIC
+	hit_type = DAMAGE_CUT
+	shot_sound = 'sound/weapons/lb_execute.ogg'
+	dissipation_delay = 8
+	impact_image_state = "bullethole"
+	color_icon = "#017cff"
+	armor_ignored = 0.33
+	casing = null
+	ricochets = TRUE
+	projectile_speed = 48
+
+	pierce
+		name = "piercer bullet"
+		sname = "execution piercer"
+		cost = 40
+		icon_state = "sniper_bullet"
+		damage_type = D_PIERCING
+		hit_type = DAMAGE_STAB
+		shot_sound = 'sound/weapons/lb_execute.ogg'
+		dissipation_delay = 10
+		impact_image_state = "bullethole"
+		color_icon = "#9d9fa1"
+		armor_ignored = 0.66
+		projectile_speed = 60
+		pierces = 1
+		ricochets = null

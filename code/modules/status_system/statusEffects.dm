@@ -1815,6 +1815,32 @@
 	visible = FALSE
 	effect_quality = STATUS_QUALITY_NEGATIVE
 
+/datum/statusEffect/draconized
+	id = "draconized"
+	name = "Draconized"
+	desc = "You should never be seeing this!"
+	icon_state = null
+	visible = FALSE
+	var/stacks = 1
+	maxDuration = 2 SECONDS
+	effect_quality = STATUS_QUALITY_NEGATIVE
+
+	onChange(optional)
+		. = ..()
+
+		stacks++
+		if(stacks >= 2)
+			owner.setStatus("draconized2")
+
+/datum/statusEffect/draconized2
+	id = "draconized2"
+	name = "Draconized2"
+	visible = FALSE
+	desc = "You should never be seeing this!"
+	maxDuration = 2 SECONDS
+	effect_quality = STATUS_QUALITY_NEGATIVE
+
+
 /datum/statusEffect/cornicened
 	id = "cornicened"
 	name = "Cornicened"
